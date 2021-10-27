@@ -8,16 +8,20 @@ host = "127.0.0.1" ## A Changer vers un server défini
 port = 64030
 
 class ThreadReception(threading.Thread):
-    def __init__(self, stop, server):
+
+    def __init__(self, server):
         threading.Thread.__init__(self)
-        self.stop = stop
+        self.running = True
         self.server = server
 
-    def run(self):
-        while(self.stop != b'fin'):
+    def run(self): ## C'est encore un peu buggué, je corrigerai ca plus tard
+        while(self.running):
             time.sleep(0.08) ## Facilite la lecture d'affichage
             data = repr(self.server.recv(1024).decode('utf-8'))
             print('\nRecu :', data)
+            if(data == "'fin'"):
+                self.running = False
+        return 0
 
 def connexion(premiere):
     if(premiere):
