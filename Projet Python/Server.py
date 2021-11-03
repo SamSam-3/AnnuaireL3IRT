@@ -2,15 +2,12 @@
 
 from Annuaire import *
 
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s: ## Server principal
     s.bind((host, port))
-    s.listen(2)
-    
-    while(True):
-        conn, addr = s.accept()
-        print(conn.getpeername())
+    s.listen(2) ## recoit 2 personnes maximum
 
-        if(conn.getpeername() not in utilisateurs):
-            utilisateurs.append([conn.getpeername()])
-            c = ThreadConnexion(conn)
-            c.start()
+    while(True): ## Attend à l'infini
+        conn, addr = s.accept() ## Attend une connexion client
+        time.sleep(0.08) ## Evite la coupure de connexion
+        c = ThreadConnexion(conn)
+        c.start()

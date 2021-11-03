@@ -39,6 +39,12 @@ class ThreadConnexion(threading.Thread):
         self.server = server
 
     def run(self):
+
+        resp= self.server.recv(1024).decode() ## Attend la réponse de connexion d'un client
+        if(resp == 'ConnexionOk'):
+            self.startServer()
+
+    def startServer(self):
         with self.server:
             r = ThreadReception(self.server)
             r.start()
@@ -46,7 +52,9 @@ class ThreadConnexion(threading.Thread):
 
             while(r.running):
                 msg = bytes(input("Envoyer un message : "), 'UTF-8')
-                self.server.send(msg)
+                self.server.send(msg) 
+                ##Erreur --> Le server envoi le message à l'un puis à l'autre machine connecté
+                ## Pour l'instant peut être pas une erreur si le server répond rapidement aux demandes
                 if(msg.decode() == 'fin'):
                     r.running = False
                     break
@@ -56,12 +64,25 @@ class ThreadConnexion(threading.Thread):
 
 def connexion(premiere):
     if(premiere):
-        creationCompte()
+        with open("dbUtilisateurs.txt",'w') as db:
+            id = input("Entrez une id utilisateur : ")
+            mdp = input("Entrez un mot de passe : ")
+            email = input("Entrez votre email : ")
+            champs=[id,mdp,email]
+
+            for i in champs:
+                db.write(i+";")
+
+            print("Vous possédez maintenant un compte !\n")
+            connexion(False)
     else:
-        id = input("Entrez votre id ou email : ")
-        mdp = input("Entrez votre mot de passe : ")
+        while(True):
+            print("-------------| CONNEXION |---------------\n")
+            id = input("Entrez votre id ou email : ")
+            mdp = input("Entrez votre mot de passe : ")
 
-
-
-def creationCompte():
-    a=0
+            with open("dbUtilisateurs.txt",'r+') as db:
+                for i in db.readlines():
+                    if(i.split(";")[0]==id or i.split(";")[1]==mdp):
+                        print("Connecté")
+                        return 0
