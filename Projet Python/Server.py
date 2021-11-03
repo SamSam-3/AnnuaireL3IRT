@@ -1,15 +1,16 @@
+#! /usr/bin/env bash
+
 from Annuaire import *
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.bind((host, port))
-    s.listen()
-    conn, addr = s.accept()
-    r = ThreadReception(conn)
-    r.start()
-    with conn:
-        print("Connecté à", addr)
+    s.listen(2)
+    
+    while(True):
+        conn, addr = s.accept()
+        print(conn.getpeername())
 
-        while r.running:
-            msg = bytes(input("Envoyer un message : ").encode(encoding='utf-8'))
-            conn.send(msg)
-        print("Communication coupée !")
+        if(conn.getpeername() not in utilisateurs):
+            utilisateurs.append([conn.getpeername()])
+            c = ThreadConnexion(conn)
+            c.start()
