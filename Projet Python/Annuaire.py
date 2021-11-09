@@ -38,6 +38,15 @@ class ThreadReception(threading.Thread):
             if(data == 'ut'):
                 print(utilisateursConnectes)
 
+            ## Fonctions utiles : 
+            ## - importer un/des contact(s)
+            ## - exporter un/des contacts(s)
+            ## - creer un contact
+            ## - afficher les infos d'un contact
+            ## - ??
+            ## - ??
+
+
         print("Communication coupée !")
         return 0
 
@@ -76,6 +85,7 @@ class ThreadConnexion(threading.Thread):
             self.server.close()
 
 
+## Fonctions commande Annuaire
 
 def connexion(premiere):
     verif = True
