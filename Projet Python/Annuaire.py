@@ -4,6 +4,12 @@ import threading
 import time
 import socket
 
+
+## IDEES:
+## Faire une GUI (Tkinter très probablement)
+## ???
+## ???
+
 ## Constante Server
 host = "127.0.0.1" ## A Changer vers un server défini 
 port = 64030
@@ -38,13 +44,19 @@ class ThreadReception(threading.Thread):
             if(data == 'ut'):
                 print(utilisateursConnectes)
 
-            ## Fonctions utiles : 
+            ## Fonctions utiles (A faire): 
+
+            ## admin :
+            ## - Creer/Supprimer/Modifier un compte
+
+            ## utilisateur :
+
             ## - importer un/des contact(s)
             ## - exporter un/des contacts(s)
-            ## - creer un contact
+            ## - creer/supprimer/modifier un contact
             ## - afficher les infos d'un contact
-            ## - ??
-            ## - ??
+            ## - Partager son annuaire à un compte
+            ## - Bonus ??
 
 
         print("Communication coupée !")
