@@ -1,4 +1,5 @@
 ##Importations library
+from os import name
 import threading
 import time
 import socket
@@ -6,14 +7,15 @@ import socket
 ## Constante Server
 host = "127.0.0.1" ## A Changer vers un server défini 
 port = 64030
-utilisateurs=[]
+utilisateursConnectes=[]
 
 class ThreadReception(threading.Thread):
 
-    def __init__(self, server):
+    def __init__(self, server,name):
         threading.Thread.__init__(self)
         self.running = True
         self.server = server
+        self.name = name
 
     def run(self): ## C'est encore un peu buggué, je corrigerai ca plus tard
         while(self.running):
@@ -24,9 +26,17 @@ class ThreadReception(threading.Thread):
             if(data == 'fin'):
                 self.running = False
                 self.server.close()
+                print(self.name +" déconnecté")
+                utilisateursConnectes.remove(self.name)
                 return 0
+            
+            print('\nRecu par {}: {}'.format(self.name,data))
 
-            print('\nRecu :', data)
+            ##Commandes Server
+
+            ## Affiche les utilisateurs connectés
+            if(data == 'ut'):
+                print(utilisateursConnectes)
 
         print("Communication coupée !")
         return 0
@@ -37,18 +47,22 @@ class ThreadConnexion(threading.Thread):
         threading.Thread.__init__(self)
         self.running = True
         self.server = server
+        self.name = "name"
 
     def run(self):
 
-        resp= self.server.recv(1024).decode() ## Attend la réponse de connexion d'un client
-        if(resp == 'ConnexionOk'):
+        resp = self.server.recv(1024).decode() ## Attend la réponse de connexion d'un client
+        
+        if(resp not in utilisateursConnectes):
+            self.name = resp
+            utilisateursConnectes.append(resp)
             self.startServer()
 
     def startServer(self):
         with self.server:
-            r = ThreadReception(self.server)
+            r = ThreadReception(self.server, self.name)
             r.start()
-            print("Connecté à", self.server.getpeername())
+            print("Connecté à", self.name)
 
             while(r.running):
                 msg = bytes(input("Envoyer un message : "), 'UTF-8')
@@ -58,31 +72,41 @@ class ThreadConnexion(threading.Thread):
                 if(msg.decode() == 'fin'):
                     r.running = False
                     break
+
             self.server.close()
 
 
 
 def connexion(premiere):
+    verif = True
     if(premiere):
-        with open("dbUtilisateurs.txt",'w') as db:
-            id = input("Entrez une id utilisateur : ")
-            mdp = input("Entrez un mot de passe : ")
-            email = input("Entrez votre email : ")
-            champs=[id,mdp,email]
+        db = open("dbUtilisateurs.txt",'a')
+        id = input("Entrez une id utilisateur : ")
+        mdp = input("Entrez un mot de passe : ")
+        email = input("Entrez votre email : ")
+        champs=[id,mdp,email]
 
-            for i in champs:
-                db.write(i+";")
+        for i in champs:
+            db.write(i+";")
+        db.write("\n")
 
-            print("Vous possédez maintenant un compte !\n")
-            connexion(False)
+        print("Vous possédez maintenant un compte !\n")
+        db.close()
+        connexion(False)
     else:
-        while(True):
+        while(verif):
             print("-------------| CONNEXION |---------------\n")
             id = input("Entrez votre id ou email : ")
             mdp = input("Entrez votre mot de passe : ")
 
-            with open("dbUtilisateurs.txt",'r+') as db:
+            with open("dbUtilisateurs.txt",'r') as db:
                 for i in db.readlines():
-                    if(i.split(";")[0]==id or i.split(";")[1]==mdp):
-                        print("Connecté")
-                        return 0
+                    if(i.split(";")[0]==id and i.split(";")[1]==mdp and id not in utilisateursConnectes):
+                        verif = not verif
+                        break
+                print("Mauvaise informations !")
+                print("Veuillez réessayer :")
+        print("Connecté")
+        return id
+
+                
