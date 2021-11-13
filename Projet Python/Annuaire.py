@@ -99,6 +99,9 @@ class ThreadConnexion(threading.Thread):
 
 ## Fonctions commande Annuaire
 
+## Le client doit envoyer ses identifiants au server et 
+## le server répond si les identifiants sont bien 
+## dans la base dbUtilisateurs.txt
 def connexion(premiere):
     verif = True
     if(premiere):
