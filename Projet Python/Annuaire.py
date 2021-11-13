@@ -11,7 +11,7 @@ import socket
 ## ???
 
 ## Constante Server
-host = "127.0.0.1" ## A Changer vers un server défini 
+host = "192.168.1.33" ## A Changer vers un server défini 
 port = 64030
 utilisateursConnectes=[]
 
