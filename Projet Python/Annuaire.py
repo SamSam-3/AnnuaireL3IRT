@@ -131,4 +131,4 @@ def connexion(premiere):
         print("Connecté")
         return id
          
-#Pour actualiser : git fetch et git pull
+#Pour actualiser : git fetch && git pull
