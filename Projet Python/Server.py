@@ -1,5 +1,3 @@
-#! /usr/bin/env bash
-
 from Annuaire import *
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s: ## Server principal
@@ -11,5 +9,3 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s: ## Server principal
         time.sleep(0.08) ## Evite la coupure de connexion
         c = ThreadConnexion(conn)
         c.start()
-
-print("GIT ON TENCULE")

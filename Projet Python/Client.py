@@ -1,8 +1,4 @@
-#! /usr/bin/env bash
-
 from Annuaire import *
-
-
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.connect((host, port))
@@ -20,4 +16,3 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         if(msg.decode() == 'fin'):
             r.running = False
             break
-        #jnfsjno

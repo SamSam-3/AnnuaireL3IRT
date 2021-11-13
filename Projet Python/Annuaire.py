@@ -11,7 +11,7 @@ import socket
 ## ???
 
 ## Constante Server
-host = "127.0.0.1" ## A Changer vers un server défini 
+host = "192.168.1.33" ## A Changer vers un server défini 
 port = 64030
 utilisateursConnectes=[]
 
@@ -125,9 +125,11 @@ def connexion(premiere):
                 for i in db.readlines():
                     if(i.split(";")[0]==id and i.split(";")[1]==mdp and id not in utilisateursConnectes):
                         verif = not verif
-                        break
-                print("Mauvaise informations !")
-                print("Veuillez réessayer :")
+                        db.close()
+                if(verif):
+                    print("Mauvaises informations !")
+                    print("Veuillez réessayer :")
+
         print("Connecté")
         return id
          
