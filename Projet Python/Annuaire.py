@@ -130,5 +130,4 @@ def connexion(premiere):
                 print("Veuillez réessayer :")
         print("Connecté")
         return id
-
-print("Hello world 12344 ")         
+         
