@@ -87,4 +87,4 @@ def conn(premiere,server):
                 return id
 
 
-client = Client(64030,"127.0.0.1")
+client = Client(64030,"192.168.43.26")
