@@ -1,7 +1,7 @@
 from AnnuaireClient import *
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    client = Client(64030,"10.188.12.206")
+    client = Client(64030,"10.188.14.206")
     s.connect((client.host, client.port))
 
     name = conn(False,s)

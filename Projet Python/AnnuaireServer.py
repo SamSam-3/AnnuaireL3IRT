@@ -91,7 +91,7 @@ class ThreadConnexion(threading.Thread):
 
             self.server.close()
 
-server = Server(64030,"10.188.12.206")
+server = Server(64030,"10.188.14.206")
 
 def connServer(client,data):
     verif = 0
