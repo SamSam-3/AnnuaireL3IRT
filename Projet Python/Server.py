@@ -1,8 +1,11 @@
-from Annuaire import *
+from AnnuaireServer import *
 
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s: ## Server principal
-    s.bind((host, port))
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s: ## Server principal    
+    server.socket = s
+
+    s.bind((server.host, server.port))
     s.listen(2) ## recoit 2 personnes maximum
+    print("En attente d'une connection ...")
 
     while(True): ## Attend à l'infini
         conn, addr = s.accept() ## Attend une connexion client
