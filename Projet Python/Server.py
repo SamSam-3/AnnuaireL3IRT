@@ -1,6 +1,7 @@
 from AnnuaireServer import *
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s: ## Server principal    
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server.socket = s
 
     s.bind((server.host, server.port))

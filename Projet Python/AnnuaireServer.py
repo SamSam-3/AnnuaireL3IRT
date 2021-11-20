@@ -2,6 +2,7 @@ import socket
 import threading
 import time
 
+
 class Server():
     def __init__(self,port,host):
         self.connectedUsers = []
@@ -36,7 +37,10 @@ class ReceptionServer(threading.Thread):
                 
                 ## Affiche les utilisateurs connectés
                 if(data == 'ut'):
-                    print(server.connectedUsers)
+                    self.server.send(objecttobytes(server.connectedUsers))
+
+                elif(data == 'ajouter'):
+                    a=0 ## A faire
 
             ## Fonctions utiles (A faire): 
 
@@ -67,7 +71,13 @@ class ThreadConnexion(threading.Thread):
     def run(self):
 
         resp = self.server.recv(1024).decode() ## Attend la réponse de connexion d'un client
+        print(resp)
         name = connServer(self.server,resp)
+
+        if(name == 200):
+            resp = self.server.recv(1024).decode()
+            print(resp)
+            name = connServer(self.server,resp)
 
         if(name not in server.connectedUsers):
             self.name = name
@@ -90,42 +100,63 @@ class ThreadConnexion(threading.Thread):
                     break
 
             self.server.close()
-
-server = Server(64030,"192.168.43.26")
+            exit(0)
 
 def connServer(client,data):
     verif = 0
     data = strToArray(data)
 
+    print("Code :",data[0])
     if(data[0]=="0"):
         db = open("dbUtilisateurs.txt",'a')
-
-        for i in data[1:]:
-            db.write(i+";")
-        db.write("\n")
-
+        
+        if(not alreadyExist(data[1])):
+            for i in data[1:]:
+                db.write(i+";")
+            db.write("\n")
+        client.send(bytes("Vous possédez maintenant un compte !\n".encode()))
+        return 200
     else:
         with open("dbUtilisateurs.txt",'r') as db:
             for i in db.readlines():
                 id = i.split(";")[0]
                 mdp = i.split(";")[1]
 
-                idUt = data[1][1:(len(data[1])-1)]
-                mdpUt = data[2][1:(len(data[2])-1)]
+                idUt = data[1]
+                mdpUt = data[2]
 
                 if(id==idUt and mdp==mdpUt and idUt not in server.connectedUsers):
                     time.sleep(0.08)
-                    client.send(bytes("0".encode())) ##Confirme que les informations sont correctes
+                    client.send(objecttobytes(0)) ##Confirme que les informations sont correctes
                     verif = 1
-                    db.close()
                     return id ## Renvoi le nom de l'utilisateur
                     
             if(verif == 0):
                 time.sleep(0.08)
-                client.send(bytes("1".encode()))
-                client.send(bytes("Mauvaises informations !\n Veuillez réessayer :".encode()))
+                client.send(objecttobytes(1))
+                client.send(objecttobytes("Mauvaises informations ! Veuillez réessayer :"))
+            db.close()
 
+def objecttobytes(object):
+    return bytes(str(object).encode())
 
 def strToArray(string):
     data = string[1:len(string)-1].replace(",","").split()
-    return data
+    array=[data[0]]
+    for i in data[1:]:
+        array.append(i[1:(len(i)-1)])
+
+    return array
+
+def alreadyExist(id):
+    db = open("dbUtilisateurs.txt",'r')
+
+    for i in db.readlines():
+        if(id in i):
+            return True
+    return False
+
+def clean(string):
+    return string[1:(len(string)-1)]
+
+server = Server(64030,"127.0.0.1")

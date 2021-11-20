@@ -2,6 +2,7 @@ import socket
 import threading
 import time
 
+commandes = ["ut","ajouterContact"]
 class ReceptionClient(threading.Thread):
 
     def __init__(self, server,name):
@@ -22,7 +23,7 @@ class ReceptionClient(threading.Thread):
                 print(self.name +" déconnecté")
 
             else:
-                print('\nRecu par {}: {}'.format(self.name,data))
+                print('\nRecu par le serveur : {}'.format(data))
 
                 ##Commandes Server
                 
@@ -56,35 +57,46 @@ class Client():
 
 def conn(premiere,server):
     verif = True
-    if(premiere):
-        id = input("Entrez une id utilisateur : ")
+    if(premiere): ## Si c'est la 1ere connexion
+        id = input("Entrez une id utilisateur : ") ## Champs nécessaire à renseigner
         mdp = input("Entrez un mot de passe : ")
         email = input("Entrez votre email : ")
         champs=[0,id,mdp,email]
 
-        server.send(bytes(str(champs).encode())) ## Envoie les champs nécessaire à la création de compte
+        server.send(objecttobytes(champs)) ## Envoie les champs nécessaire à la création de compte
 
-        print(server.recv(1024).decode())
-        print("Vous possédez maintenant un compte !\n")
-        
-        conn(False,server)
-    else:
-        while(verif):
+        print(server.recv(1024).decode()) ## Attend le retour du serveur à la création du compte
+
+        premiere = False
+
+    if(not premiere): 
+
+        while(verif): ##Tant que le client ne renseigne pas de bonnes informations
             print("-------------| CONNEXION |---------------\n")
             id = input("Entrez votre id ou email : ")
             mdp = input("Entrez votre mot de passe : ")
             champs=[1,id,mdp]
     
-            server.send(bytes(str(champs).encode()))
+            server.send(objecttobytes(champs)) ##Envois les champs nécessaire à la connexion
             
             time.sleep(0.08)
-            data = server.recv(2048).decode()
+            data = server.recv(2048).decode() ##Attent le retour du serveur à la connexion
 
-            if(data[0]=="0"):        
-                verif = False
-                client.connected = True
+            if(data[0]=="0"): ## Si la réponse est correct
+                verif = False ## Sort de la boucle de connexion
+                client.connected = True ## Etat du client --> Connecté
                 print("Connecté")
-                return id
+                return id ## Renvoie le nom du client
 
 
-client = Client(64030,"192.168.43.26")
+## Transforme un objet en bytes encodé pour l'envoie de données
+def objecttobytes(object):
+    return bytes(str(object).encode())
+
+
+## Permet de transformer une string en tableau pour le transfert client/server
+def strToArray(string):
+    data = string[1:len(string)-1].replace(",","").split()
+    return data
+
+client = Client(64030,"127.0.0.1")
