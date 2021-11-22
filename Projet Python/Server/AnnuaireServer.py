@@ -1,6 +1,7 @@
 import socket
 import threading
 import time
+import os
 
 
 class Server():
@@ -20,42 +21,44 @@ class ReceptionServer(threading.Thread):
 
     def run(self): ## C'est encore un peu buggué, je corrigerai ca plus tard
         while(self.running):
-
-            time.sleep(0.08) ## Facilite la lecture d'affichage
-            data = self.server.recv(2048).decode() ## Recoit le retour du client
-
-            ##Si le client coupe la connexion
-            if(data == 'fin'): 
-                self.running = False
-                self.server.close()
-                print(self.name +" déconnecté")
-                server.connectedUsers.remove(self.name) ## Si le server recoit un code, il supprime l'utilisateur de ses ut connectés 
-
-            else:
-                print('\nRecu par {}: {}'.format(self.name,data))
-
-                ##Commandes Server
+            with open("{}/Annuaire.txt".format(self.name),'r+') as annuaire:
                 
-                ## Affiche les utilisateurs connectés
-                if(data == 'ut'):
-                    self.server.send(objecttobytes(server.connectedUsers)) ##Envoie la liste des utilisateurs connectés
+                time.sleep(0.08) ## Facilite la lecture d'affichage
+                data = self.server.recv(2048).decode() ## Recoit le retour du client
 
-                elif(data == 'ajouter'):
-                    a=0 ## A faire
+                ##Si le client coupe la connexion
+                if(data == 'fin'): 
+                    self.running = False
+                    annuaire.close()
+                    self.server.close()
+                    print(self.name +" déconnecté")
+                    server.connectedUsers.remove(self.name) ## Si le server recoit un code, il supprime l'utilisateur de ses ut connectés 
 
-            ## Fonctions utiles (A faire): 
+                else:
+                    print('\nRecu par {}: {}'.format(self.name,data))
 
-            ## admin :
-            ## - Creer/Supprimer/Modifier un compte
+                    ##Commandes Server
 
-            ## utilisateur :
+                    ## Affiche les utilisateurs connectés
+                    if(data == 'ut'):
+                        self.server.send(objecttobytes(server.connectedUsers)) ##Envoie la liste des utilisateurs connectés
 
-            ## - importer un/des contact(s)
-            ## - exporter un/des contacts(s)
-            ## - creer/supprimer/modifier un contact
-            ## - afficher les infos d'un contact
-            ## - Partager son annuaire à un compte
-            ## - Bonus ??
+                    elif(data == 'ajouter'):
+                        a=0 ## A faire
+
+                ## Fonctions utiles (A faire): 
+
+                ## admin :
+                ## - Creer/Supprimer/Modifier un compte
+
+                ## utilisateur :
+
+                ## - importer un/des contact(s)
+                ## - exporter un/des contacts(s)
+                ## - creer/supprimer/modifier un contact
+                ## - afficher les infos d'un contact
+                ## - Partager son annuaire à un compte
+                ## - Bonus ??
 
 
         print("Communication coupée !")
@@ -105,7 +108,6 @@ def connServer(client,data):
     verif = 0
     data = strToArray(data)
 
-    print("Code :",data[0])
     if(data[0]=="0"):
         db = open("dbUtilisateurs.txt",'a')
         
@@ -113,8 +115,15 @@ def connServer(client,data):
             for i in data[1:]:
                 db.write(i+";")
             db.write("\n")
-        client.send(bytes("Vous possédez maintenant un compte !\n".encode()))
+
+            os.system("mkdir {}".format(data[1])) ## Crée le dossier du client
+            os.system("touch {}/Annuaire.txt".format(data[1])) ## Lui construit un annuaire
+            client.send(bytes("Vous possédez maintenant un compte !\n".encode()))
+        else:
+            client.send(bytes("Vous possédez déjà un compte !".encode()))
+        
         return 200
+
     else:
         with open("dbUtilisateurs.txt",'r') as db:
             for i in db.readlines():
@@ -135,6 +144,11 @@ def connServer(client,data):
                 client.send(objecttobytes(1))
                 client.send(objecttobytes("Mauvaises informations ! Veuillez réessayer :"))
             db.close()
+
+
+
+
+
 
 ##Transforme un objet en bytes encodé pour l'envoie au client
 def objecttobytes(object):

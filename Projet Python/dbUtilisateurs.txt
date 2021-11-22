@@ -1,3 +1,0 @@
-Samuel;motdepasse;samuel.castre82@gmail.com;
-admin;admin;admin@admin.fr;
-guest;guest;guest@gmail.com;

@@ -25,23 +25,6 @@ class ReceptionClient(threading.Thread):
             else:
                 print('\nRecu par le serveur : {}'.format(data))
 
-                ##Commandes Server
-
-            ## Fonctions utiles (A faire): 
-
-            ## admin :
-            ## - Creer/Supprimer/Modifier un compte
-
-            ## utilisateur :
-
-            ## - importer un/des contact(s)
-            ## - exporter un/des contacts(s)
-            ## - creer/supprimer/modifier un contact
-            ## - afficher les infos d'un contact
-            ## - Partager son annuaire à un compte
-            ## - Bonus ??
-
-
         print("Communication coupée !")
         return 0
 
