@@ -22,9 +22,10 @@ class ReceptionServer(threading.Thread):
         while(self.running):
 
             time.sleep(0.08) ## Facilite la lecture d'affichage
-            data = self.server.recv(2048).decode() ## Recoit le retour du
+            data = self.server.recv(2048).decode() ## Recoit le retour du client
 
-            if(data == 'fin'):
+            ##Si le client coupe la connexion
+            if(data == 'fin'): 
                 self.running = False
                 self.server.close()
                 print(self.name +" déconnecté")
@@ -37,7 +38,7 @@ class ReceptionServer(threading.Thread):
                 
                 ## Affiche les utilisateurs connectés
                 if(data == 'ut'):
-                    self.server.send(objecttobytes(server.connectedUsers))
+                    self.server.send(objecttobytes(server.connectedUsers)) ##Envoie la liste des utilisateurs connectés
 
                 elif(data == 'ajouter'):
                     a=0 ## A faire
@@ -71,17 +72,15 @@ class ThreadConnexion(threading.Thread):
     def run(self):
 
         resp = self.server.recv(1024).decode() ## Attend la réponse de connexion d'un client
-        print(resp)
-        name = connServer(self.server,resp)
+        code = connServer(self.server,resp) ##Récupère son 
 
-        if(name == 200):
-            resp = self.server.recv(1024).decode()
-            print(resp)
-            name = connServer(self.server,resp)
+        if(code == 200): ## Si la création du code est correct
+            resp = self.server.recv(1024).decode() ##
+            code = connServer(self.server,resp)
 
-        if(name not in server.connectedUsers):
-            self.name = name
-            server.connectedUsers.append(name)
+        if(code not in server.connectedUsers):
+            self.name = code
+            server.connectedUsers.append(self.name)
             self.startServer()
 
     def startServer(self):
@@ -137,9 +136,11 @@ def connServer(client,data):
                 client.send(objecttobytes("Mauvaises informations ! Veuillez réessayer :"))
             db.close()
 
+##Transforme un objet en bytes encodé pour l'envoie au client
 def objecttobytes(object):
     return bytes(str(object).encode())
 
+## Transforme une string en tableau
 def strToArray(string):
     data = string[1:len(string)-1].replace(",","").split()
     array=[data[0]]
@@ -148,6 +149,7 @@ def strToArray(string):
 
     return array
 
+## Verifie si l'utilisateur existe déjà dans la db
 def alreadyExist(id):
     db = open("dbUtilisateurs.txt",'r')
 
@@ -155,8 +157,5 @@ def alreadyExist(id):
         if(id in i):
             return True
     return False
-
-def clean(string):
-    return string[1:(len(string)-1)]
 
 server = Server(64030,"127.0.0.1")

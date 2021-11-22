@@ -2,7 +2,7 @@ import socket
 import threading
 import time
 
-commandes = ["ut","ajouterContact"]
+commandes = ["ut","ajouter"]
 class ReceptionClient(threading.Thread):
 
     def __init__(self, server,name):
@@ -15,9 +15,9 @@ class ReceptionClient(threading.Thread):
         while(self.running):
 
             time.sleep(0.08) ## Facilite la lecture d'affichage
-            data = self.server.recv(2048).decode() ## Recoit le retour du
+            data = self.server.recv(2048).decode() ## Recoit le retour du server
 
-            if(data == 'fin'):
+            if(data == 'fin'): 
                 self.running = False
                 self.server.close()
                 print(self.name +" déconnecté")
@@ -26,10 +26,6 @@ class ReceptionClient(threading.Thread):
                 print('\nRecu par le serveur : {}'.format(data))
 
                 ##Commandes Server
-                
-                ## Affiche les utilisateurs connectés
-                if(data == 'ut'):
-                    a=0
 
             ## Fonctions utiles (A faire): 
 

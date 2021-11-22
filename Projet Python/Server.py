@@ -11,5 +11,5 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s: ## Server principal
     while(True): ## Attend à l'infini
         conn, addr = s.accept() ## Attend une connexion client
         time.sleep(0.08) ## Evite la coupure de connexion
-        c = ThreadConnexion(conn)
+        c = ThreadConnexion(conn) ##Créer la connexion avec un client
         c.start()

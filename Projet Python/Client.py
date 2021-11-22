@@ -15,18 +15,19 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         msg = bytes(input("Envoyer un message : "), 'UTF-8')
         entree = msg.decode()
 
+        ## Met fin à la connexion avec le server
         if(entree == 'fin'):
             s.send(msg)
             r.running = False
             s.close()
             exit(0)
 
-        elif(entree == 'help'): ## Récupère la liste des commandes disponibles
+        ## Récupère la liste des commandes disponibles
+        elif(entree == 'help'): 
             for commande in commandes:
                 print("\t- {}".format(commande))
 
+        ## Envoi la commande si elle appartient aux registre de commandes disponibles
         elif(entree in commandes):
             s.send(msg)
             
-        else:
-            s.send(msg)
